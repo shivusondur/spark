@@ -159,6 +159,11 @@ private class AsyncEventQueue(
 
     val droppedCount = droppedEventsCounter.get
     if (droppedCount > 0) {
+      // If first time the dropEvent occurs, then record the current time as the
+      // lastReportTimestamp.
+      if (lastReportTimestamp == 0) {
+        lastReportTimestamp = System.currentTimeMillis()
+      }
       // Don't log too frequently
       if (System.currentTimeMillis() - lastReportTimestamp >= 60 * 1000) {
         // There may be multiple threads trying to decrease droppedEventsCounter.
