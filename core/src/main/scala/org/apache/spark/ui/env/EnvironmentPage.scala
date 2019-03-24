@@ -49,20 +49,19 @@ private[ui] class EnvironmentPage(
     val classpathEntriesTable = UIUtils.listingTable(
       classPathHeaders, classPathRow, appEnv.classpathEntries.sorted, fixedWidth = true)
     val content =
-      <span>
-        <span class="collapse-aggregated-runtimeInformation collapse-table"
+      <span class="collapse-aggregated-runtimeInformation collapse-table"
             onClick="collapseTable('collapse-aggregated-runtimeInformation',
             'aggregated-runtimeInformation')">
-          <h4>
-            <span class="collapse-table-arrow arrow-open"></span>
-            <a>Runtime Information</a>
-          </h4>
-        </span>
+        <h4>
+          <span class="collapse-table-arrow arrow-open"></span>
+          <a>Runtime Information</a>
+        </h4>
+      </span>
         <div class="aggregated-runtimeInformation collapsible-table">
           {runtimeInformationTable}
         </div>
         <span class="collapse-aggregated-sparkProperties collapse-table"
-            onClick="collapseTable('collapse-aggregated-sparkProperties',
+              onClick="collapseTable('collapse-aggregated-sparkProperties',
             'aggregated-sparkProperties')">
           <h4>
             <span class="collapse-table-arrow arrow-open"></span>
@@ -72,42 +71,48 @@ private[ui] class EnvironmentPage(
         <div class="aggregated-sparkProperties collapsible-table">
           {sparkPropertiesTable}
         </div>
-        <span class="collapse-aggregated-hadoopProperties collapse-table"
-              onClick="collapseTable('collapse-aggregated-hadoopProperties',
+    if (appEnv.hadoopProperties.nonEmpty) {
+      content ++= <span class="collapse-aggregated-hadoopProperties collapse-table"
+                        onClick="collapseTable('collapse-aggregated-hadoopProperties',
             'aggregated-hadoopProperties')">
-          <h4>
-            <span class="collapse-table-arrow arrow-closed"></span>
-            <a>Hadoop Properties</a>
-          </h4>
-        </span>
+        <h4>
+          <span class="collapse-table-arrow arrow-closed"></span>
+          <a>Hadoop Properties</a>
+        </h4>
+      </span>
         <div class="aggregated-hadoopProperties collapsible-table collapsed">
           {hadoopPropertiesTable}
         </div>
-        <span class="collapse-aggregated-systemProperties collapse-table"
-            onClick="collapseTable('collapse-aggregated-systemProperties',
+    }
+    content ++= <span class="collapse-aggregated-systemProperties collapse-table"
+                      onClick="collapseTable('collapse-aggregated-systemProperties',
             'aggregated-systemProperties')">
-          <h4>
-            <span class="collapse-table-arrow arrow-closed"></span>
-            <a>System Properties</a>
-          </h4>
-        </span>
-        <div class="aggregated-systemProperties collapsible-table collapsed">
-          {systemPropertiesTable}
-        </div>
-        <span class="collapse-aggregated-classpathEntries collapse-table"
+      <h4>
+        <span class="collapse-table-arrow arrow-closed"></span>
+        <a>System Properties</a>
+      </h4>
+    </span>
+      <div class="aggregated-systemProperties collapsible-table collapsed">
+        {systemPropertiesTable}
+      </div>
+      <span class="collapse-aggregated-classpathEntries collapse-table"
             onClick="collapseTable('collapse-aggregated-classpathEntries',
             'aggregated-classpathEntries')">
-          <h4>
-            <span class="collapse-table-arrow arrow-closed"></span>
-            <a>Classpath Entries</a>
-          </h4>
-        </span>
-        <div class="aggregated-classpathEntries collapsible-table collapsed">
-          {classpathEntriesTable}
-        </div>
+        <h4>
+          <span class="collapse-table-arrow arrow-closed"></span>
+          <a>Classpath Entries</a>
+        </h4>
       </span>
+      <div class="aggregated-classpathEntries collapsible-table collapsed">
+        {classpathEntriesTable}
+      </div>
 
-    UIUtils.headerSparkPage(request, "Environment", content, parent)
+    val finalContent = <span>
+      {content}
+    </span>
+
+
+    UIUtils.headerSparkPage(request, "Environment", finalContent, parent)
   }
 
   private def propertyHeader = Seq("Name", "Value")
