@@ -17,6 +17,7 @@
 
 package org.apache.spark.ui.jobs
 
+import java.lang.NumberFormatException
 import java.net.URLEncoder
 import java.util.Date
 import javax.servlet.http.HttpServletRequest
@@ -51,7 +52,17 @@ private[ui] class StageTableBase(
   val parameterStageSortDesc = request.getParameter(stageTag + ".desc")
   val parameterStagePageSize = request.getParameter(stageTag + ".pageSize")
 
-  val stagePage = Option(parameterStagePage).map(_.toInt).getOrElse(1)
+  val stagePage = {
+    try {
+      // if it is able to parse to float it will always gives value
+      Option(parameterStagePage).map(_.toFloat).map(_.toInt).getOrElse(1)
+    }
+    catch {
+      // Otherwise throws NumberFormatException
+      case e: NumberFormatException => 1
+    }
+  }
+
   val stageSortColumn = Option(parameterStageSortColumn).map { sortColumn =>
     UIUtils.decodeURLParameter(sortColumn)
   }.getOrElse("Stage Id")
@@ -59,7 +70,16 @@ private[ui] class StageTableBase(
     // New stages should be shown above old jobs by default.
     stageSortColumn == "Stage Id"
   )
-  val stagePageSize = Option(parameterStagePageSize).map(_.toInt).getOrElse(100)
+  val stagePageSize = {
+    try {
+      // if it is able to parse to float it will always gives value
+      Option(parameterStagePageSize).map(_.toFloat).map(_.toInt).getOrElse(100)
+    }
+    catch {
+      // Otherwise throws NumberFormatException
+      case e: NumberFormatException => 100
+    }
+  }
 
   val currentTime = System.currentTimeMillis()
 
